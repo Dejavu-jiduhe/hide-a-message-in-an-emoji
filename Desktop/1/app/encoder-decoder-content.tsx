@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { Textarea } from "@/components/ui/textarea"
 import { CardContent } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
@@ -11,18 +11,6 @@ import { decode, encode } from "./encoding"
 import { EmojiSelector } from "@/components/emoji-selector"
 import { ALPHABET_LIST, EMOJI_LIST } from "./emoji"
 import { Copy, Check, AlertCircle, ArrowRight, ArrowDown, Type, Smile } from "lucide-react"
-
-// Separate component that uses useSearchParams
-function SearchParamsHandler({ onModeChange }: { onModeChange: (mode: string) => void }) {
-  const searchParams = useSearchParams()
-  const mode = searchParams.get("mode") || "encode"
-  
-  useEffect(() => {
-    onModeChange(mode)
-  }, [mode, onModeChange])
-  
-  return null
-}
 
 export function Base64EncoderDecoderContent() {
   const router = useRouter()
@@ -35,17 +23,23 @@ export function Base64EncoderDecoderContent() {
   const [errorText, setErrorText] = useState("")
   const [copied, setCopied] = useState(false)
 
+  // Initialize mode from URL on client side only
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const urlMode = params.get("mode") || "encode"
+      setMode(urlMode)
+    }
+  }, [])
+
   // Update URL when mode changes
   const updateMode = (newMode: string) => {
     setMode(newMode)
-    const params = new URLSearchParams(window.location.search)
-    params.set("mode", newMode)
-    router.replace(`?${params.toString()}`)
-  }
-
-  // Handle mode changes from URL
-  const handleModeChange = (urlMode: string) => {
-    setMode(urlMode)
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      params.set("mode", newMode)
+      router.replace(`?${params.toString()}`)
+    }
   }
 
   // Convert input whenever it changes
@@ -77,11 +71,7 @@ export function Base64EncoderDecoderContent() {
   const isEncoding = mode === "encode"
 
   return (
-    <>
-      <Suspense fallback={null}>
-        <SearchParamsHandler onModeChange={handleModeChange} />
-      </Suspense>
-      <CardContent className="space-y-6 p-4 sm:p-6">
+    <CardContent className="space-y-6 p-4 sm:p-6">
       {/* Introduction text */}
       <div className="text-center">
         <p className="text-gray-600 leading-relaxed">
@@ -232,6 +222,5 @@ export function Base64EncoderDecoderContent() {
         </div>
       )}
     </CardContent>
-    </>
   )
 }
