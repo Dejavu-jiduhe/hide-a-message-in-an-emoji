@@ -1,8 +1,22 @@
 import { Suspense } from "react"
+import dynamic from "next/dynamic"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Base64EncoderDecoderContent } from "./encoder-decoder-content"
 import { Github, Sparkles, Lock, Unlock } from "lucide-react"
 import "./animations.css"
+
+// 动态导入组件，禁用SSR
+const Base64EncoderDecoderContent = dynamic(
+  () => import("./encoder-decoder-content").then(mod => ({ default: mod.Base64EncoderDecoderContent })),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+        <span className="ml-2 text-gray-600">Loading...</span>
+      </div>
+    )
+  }
+)
 
 export default function EncoderDecoder() {
   return (
@@ -38,15 +52,8 @@ export default function EncoderDecoder() {
 
         {/* Main content card */}
         <div className="max-w-4xl mx-auto animate-fade-in-scale delay-300">
-yy          <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-2xl rounded-3xl overflow-hidden card-hover hover-glow">
-            <Suspense fallback={
-              <div className="flex items-center justify-center p-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-                <span className="ml-2 text-gray-600">Loading...</span>
-              </div>
-            }>
-              <Base64EncoderDecoderContent />
-            </Suspense>
+          <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-2xl rounded-3xl overflow-hidden card-hover hover-glow">
+            <Base64EncoderDecoderContent />
           </Card>
         </div>
 
