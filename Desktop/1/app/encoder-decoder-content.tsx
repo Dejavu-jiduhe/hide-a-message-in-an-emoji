@@ -22,15 +22,23 @@ export function Base64EncoderDecoderContent() {
   const [outputText, setOutputText] = useState("")
   const [errorText, setErrorText] = useState("")
   const [copied, setCopied] = useState(false)
+  const [isClient, setIsClient] = useState(false)
 
-  // Initialize mode from URL on client side only
+  // Ensure we're on the client side
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search)
-      const urlMode = params.get("mode") || "encode"
-      setMode(urlMode)
-    }
+    setIsClient(true)
   }, [])
+
+  // Initialize mode from URL only after client-side hydration
+  useEffect(() => {
+    if (isClient && typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const urlMode = params.get("mode")
+      if (urlMode === "encode" || urlMode === "decode") {
+        setMode(urlMode)
+      }
+    }
+  }, [isClient])
 
   // Update URL when mode changes
   const updateMode = (newMode: string) => {
