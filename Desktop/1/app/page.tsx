@@ -39,7 +39,14 @@ export default function EncoderDecoder() {
         {/* Main content card */}
         <div className="max-w-4xl mx-auto animate-fade-in-scale delay-300">
           <Card className="backdrop-blur-sm bg-white/80 border-0 shadow-2xl rounded-3xl overflow-hidden card-hover hover-glow">
-            <Base64EncoderDecoderContent />
+            <Suspense fallback={
+              <div className="flex items-center justify-center p-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                <span className="ml-2 text-gray-600">Loading...</span>
+              </div>
+            }>
+              <Base64EncoderDecoderContent />
+            </Suspense>
           </Card>
         </div>
 
