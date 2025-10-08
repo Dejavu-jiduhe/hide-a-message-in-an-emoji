@@ -16,11 +16,12 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // GitHub Pages 静态导出配置
+  // 静态导出配置
   output: 'export',
   trailingSlash: true,
-  basePath: process.env.NODE_ENV === 'production' ? '/hide-a-message-in-an-emoji' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/hide-a-message-in-an-emoji' : '',
+  // 移除 basePath 和 assetPrefix，因为 Vercel 不需要这些配置
+  // basePath: process.env.NODE_ENV === 'production' ? '/hide-a-message-in-an-emoji' : '',
+  // assetPrefix: process.env.NODE_ENV === 'production' ? '/hide-a-message-in-an-emoji' : '',
   experimental: {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
