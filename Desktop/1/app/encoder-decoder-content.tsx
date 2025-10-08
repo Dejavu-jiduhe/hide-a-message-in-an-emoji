@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { Textarea } from "@/components/ui/textarea"
 import { CardContent } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
@@ -13,7 +12,6 @@ import { ALPHABET_LIST, EMOJI_LIST } from "./emoji"
 import { Copy, Check, AlertCircle, ArrowRight, ArrowDown, Type, Smile } from "lucide-react"
 
 export function Base64EncoderDecoderContent() {
-  const router = useRouter()
   
   // State for mode, initialized with default value
   const [mode, setMode] = useState("encode")
@@ -40,13 +38,14 @@ export function Base64EncoderDecoderContent() {
     }
   }, [isClient])
 
-  // Update URL when mode changes
+  // Update URL when mode changes using native history API
   const updateMode = (newMode: string) => {
     setMode(newMode)
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search)
       params.set("mode", newMode)
-      router.replace(`?${params.toString()}`)
+      const newUrl = `${window.location.pathname}?${params.toString()}`
+      window.history.replaceState({}, '', newUrl)
     }
   }
 
